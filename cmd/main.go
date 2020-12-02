@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"image"
+	"image/png"
 	"log"
 	"os"
 
@@ -21,7 +22,7 @@ func init() {
 	log.SetPrefix("")
 
 	flag.StringVar(&srcImage, "src", "", "source image")
-	flag.StringVar(&srcMask, "mask_src", "mask-1350-sq.png", "circle mask used to filter out ")
+	flag.StringVar(&srcMask, "mask_src", "", "circle mask used to filter out ")
 	flag.BoolVar(&outputSegmentation, "s", false, "output black and white segmentation result")
 	flag.StringVar(&outputFile, "out", "out.png", "output file if segmentation is enabled")
 	flag.Parse()
@@ -45,8 +46,16 @@ func main() {
 	cci := alg.NewCCI(src, mask)
 	cci.Run()
 	if outputSegmentation {
-		if err := cci.SaveSegmentation(outputFile); err != nil {
+		img, err := cci.SaveSegmentation()
+		if err != nil {
 			log.Fatal(err)
+		}
+		outFile, err := os.Create(outputFile)
+		if err != nil {
+			log.Fatalf("Failed creating output file\n%v", err)
+		}
+		if err := png.Encode(outFile, img); err != nil {
+			log.Fatalf("Failed encoding result image\n%v", err)
 		}
 	}
 }
