@@ -22,8 +22,11 @@ func NewCCI(src, mask image.Image) *CCI {
 	return cci
 }
 
+// Run returns the cloud cover index obtained from the source image applying the mask.
+// Cloud Cover Index is calculated tagging individual pixels as cloud or sky using their RGB value.
+// Pixels are considered cloud when they R/B ratio is >= 0.95, otherwise
 func (c *CCI) Run() float64 {
-	outputBounds := c.getOutputBounds()
+	outputBounds := c.OutputBounds()
 	maskOffset, srcOffset := c.getImagesOffset()
 
 	c.out = image.NewRGBA(outputBounds)
@@ -49,17 +52,20 @@ func (c *CCI) Run() float64 {
 	return clouds / area
 }
 
-func isWhite(c color.Color) bool {
-	r, g, b, a := c.RGBA()
-	wR, wG, wB, wA := color.White.RGBA()
-	return r == wR && g == wG && b == wB && a == wA
+// SaveSegmentation returns the image that resulted from the cloud segmentation algorithm.
+// Run() has to be called before this method such that output result is ready.
+func (c *CCI) SaveSegmentation() (*image.RGBA, error) {
+	if c.out == nil {
+		return nil, fmt.Errorf("CCI have not been calculated yet, please call Run() first")
+	}
+	return c.out, nil
 }
 
-// getOutputBounds returns a rectangle of the size of the intersection of the mask and source image. You can think of
+// OutputBounds returns a rectangle of the size of the intersection of the mask and source image. You can think of
 // the rectangle dimensions as:
 // 		width = min(src.width, mask.width) = rectangle.Max.X
 //		height = min(src.height, mask.height) = rectangle.Max.Y
-func (c *CCI) getOutputBounds() image.Rectangle {
+func (c *CCI) OutputBounds() image.Rectangle {
 	topLeft := image.Point{X: 0, Y: 0}
 	lowRight := image.Point{}
 	if c.src.Bounds().Max.X < c.mask.Bounds().Max.X {
@@ -96,9 +102,8 @@ func (c *CCI) getImagesOffset() (image.Point, image.Point) {
 	return mask, src
 }
 
-func (c *CCI) SaveSegmentation() (*image.RGBA, error) {
-	if c.out == nil {
-		return nil, fmt.Errorf("CCI have not been calculated yet, please call Run() first")
-	}
-	return c.out, nil
+func isWhite(c color.Color) bool {
+	r, g, b, a := c.RGBA()
+	wR, wG, wB, wA := color.White.RGBA()
+	return r == wR && g == wG && b == wB && a == wA
 }
