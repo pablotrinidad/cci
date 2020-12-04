@@ -1,3 +1,4 @@
+// package alg contains a cloud cover index calculator that performs the computations using a source and a mask image.
 package alg
 
 import (
