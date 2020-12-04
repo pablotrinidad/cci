@@ -8,7 +8,7 @@ a basic RGB-based cloud segmentation algorithm.
 #### Build at home
 
 1. Download 1.15 Golang compiler. Instructions [here](https://golang.org/doc/install).
-2. Build binary with `go build cmd/main.go -o cci`
+2. Build binary with `go build -o cci cmd/main.go`
 3. (optionally) Run and build in the same command `go run cmd/main.go`
 
 #### Instructions
