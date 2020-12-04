@@ -22,26 +22,31 @@ func NewCCI(src, mask image.Image) *CCI {
 	return cci
 }
 
-func (c *CCI) Run() {
+func (c *CCI) Run() float64 {
 	outputBounds := c.getOutputBounds()
 	maskOffset, srcOffset := c.getImagesOffset()
-	fmt.Println(srcOffset.X, srcOffset.Y)
 
 	c.out = image.NewRGBA(outputBounds)
+	area := 0.0
+	clouds := 0.0
 
 	for y := 0; y < outputBounds.Max.Y; y++ {
 		for x := 0; x < outputBounds.Max.X; x++ {
 			maskColor := c.mask.At(x+maskOffset.X, y+maskOffset.Y)
 			srcColor := c.src.At(x+srcOffset.X, y+srcOffset.Y)
 			if isWhite(maskColor) {
-				c.out.Set(x, y, srcColor)
-				//r, g, b, a := maskColor.RGBA()
-				//fmt.Printf("%d, %d: (%d, %d, %d, %d)\n", x, y, r, g, b, a)
-			} else {
-				c.out.Set(x, y, color.RGBA{R: 255, G: 0, B: 0, A: 255})
+				r, _, b, _ := srcColor.RGBA()
+				if float64(r)/float64(b) < 0.95 {
+					c.out.Set(x, y, color.Black)
+				} else {
+					c.out.Set(x, y, color.White)
+					clouds++
+				}
+				area++
 			}
 		}
 	}
+	return clouds / area
 }
 
 func isWhite(c color.Color) bool {

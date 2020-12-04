@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"image"
 	"image/png"
 	"log"
@@ -44,7 +45,8 @@ func init() {
 func main() {
 	src, mask := loadImages()
 	cci := alg.NewCCI(src, mask)
-	cci.Run()
+	index := cci.Run()
+	fmt.Printf("Cloud Cover Index: %f\n", index)
 	if outputSegmentation {
 		img, err := cci.SaveSegmentation()
 		if err != nil {
