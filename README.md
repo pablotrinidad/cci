@@ -97,7 +97,14 @@ Use built binary with the following flags
 
 *command*: **`./cci -src samples/rect-1.jpg -mask samples/3264-1831-happy-mask.png -s -out samples/rect-1-rect-happy-mask.png`**
 
- ## Contributors
+| Source Image   |                Segmentation result           | CCI           |
+| :-------------------------: | :-----------------------------: | :-----------: |
+| ![rect-1](samples/small-lots-of-clouds.jpg) | ![rect-1 seg](samples/small-lots-of-clouds.png) |  0.308125     |
+
+*command*: **`./cci -src samples/small-lots-of-clouds.jpg -mask samples/3264-1831-rect-mask.png -s -out samples/small-lots-of-clouds.png`**
+
+
+## Contributors
  
  - Pablo Trinidad ([@pablotrinidad](https://github.com/pablotrinidad))
  - Diego Jardón ([@jardondiego](https://github.com/jardondiego))
